@@ -1,0 +1,67 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  googleId  String   @unique
+  name      String
+  email     String   @unique
+  avatar    String?
+  emails    Email[]
+  senders   Sender[]
+  slackIntegration SlackIntegration?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Sender {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  etherealUser   String
+  etherealPass   String
+  etherealHost   String
+  etherealPort   Int
+  emails    Email[]
+  createdAt DateTime @default(now())
+}
+
+model Email {
+  id                String   @id @default(cuid())
+  userId            String
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  senderId          String
+  sender            Sender   @relation(fields: [senderId], references: [id])
+  toEmail           String
+  subject           String
+  body              String
+  scheduledAt       DateTime
+  sentAt            DateTime?
+  status            String   @default("SCHEDULED") // SCHEDULED|PROCESSING|SENT|FAILED
+  jobId             String   @unique
+  error             String?
+  etherealPreviewUrl String?
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  @@index([userId, status])
+  @@index([status, scheduledAt])
+}
+
+model SlackIntegration {
+  id          String   @id @default(cuid())
+  userId      String   @unique
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken String
+  channelId   String?
+  webhookUrl  String?
+  teamName    String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}

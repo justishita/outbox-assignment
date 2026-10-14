@@ -1,0 +1,44 @@
+# Dependencies
+node_modules/
+**/node_modules/
+
+# Secrets (keep only .env.example)
+.env
+.env.*
+!.env.example
+**/.env
+**/.env.*
+!**/.env.example
+
+# Build output
+dist/
+**/dist/
+build/
+*.tsbuildinfo
+
+# Logs
+*.log
+logs/
+
+# Local test scratch files (root level)
+/check_sent.ps1
+/test_*.ps1
+/test_email.json
+cookies.txt
+AUDIT_REPORT.md
+
+# Docker volumes / local data
+pgdata/
+redis-data/
+esdata/
+data/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+
+# Coverage
+coverage/
